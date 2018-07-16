@@ -25,7 +25,7 @@ packs <- c(
 	"magrittr",
 	"RColorBrewer",
 	"raster",
-	"rPython",
+	"reticulate",
 	"shiny",
 	"shinyBS",
 	"shinyjs",
@@ -41,6 +41,12 @@ packs_gh <- c(
 
 p_load(char = packs)
 p_load_gh(char = packs_gh)
+
+# ---------------------------------------------------------- PY FUNCTIONS ----
+#set your virtual env
+use_condaenv(condaenv = "python2", conda = "/anaconda3/bin/conda", required = TRUE)
+#source function
+source_python(paste0(getwd(), "/python/gee-px-ls.py"))
 
 # ---------------------------------------------------------- FUNCTIONS ----
 

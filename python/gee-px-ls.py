@@ -3,10 +3,9 @@ import numpy
 import ssl
 from datetime import datetime
 
-# earth engine API init
+#Initialize earth engine
 ee.Initialize()
 
-# convert Julian day to YYYY-MM-DD date
 def julianDayToDate(s):
 	return datetime.strptime(s, '%Y%j').strftime('%Y_%m_%d')
 
@@ -68,35 +67,46 @@ def getVi8(image):
 	)
 	return(image2)
 
-# create a geometry point with provided coordinates
-longCen = float(coords[0])
-latCen = float(coords[1])
-bounds = ee.Geometry.Point([longCen, latCen])
+# convert Julian day to YYYY-MM-DD date
+def geteeSeries(coords,satChoice):
 
-# define image collection
-imgCol = ee.ImageCollection('LANDSAT/' + satChoice)
+	# create a geometry point with provided coordinates
+	longCen = float(coords[0])
+	latCen = float(coords[1])
+	bounds = ee.Geometry.Point([longCen, latCen])
 
-# get time series from GEE
-if satChoice == 'LC8_SR':
-	values = imgCol.filterBounds(bounds).map(getVi8).getRegion(bounds, 30)
-else:
-	values = imgCol.filterBounds(bounds).map(getVi).getRegion(bounds, 30)
+	# define image collection
+	imgCol = ee.ImageCollection('LANDSAT/' + satChoice)
 
-# get time series info and apply cfmask filter
-try:
-	aux = values.getInfo()
-	serie = []
-	for i in range(1, len(aux)):
-		# filtering using cfmask (only clear pixels are kept [value = 0])
-		if aux[i][4] == 0:
-			serie += [julianDayToDate(str(aux[i][0])[9:16])] + \
-			numpy.round(aux[i][5:15], 4).tolist()
+	# get time series from GEE
+	if satChoice == 'LC8_SR':
+		values = imgCol.filterBounds(bounds).map(getVi8).getRegion(bounds, 30)
+	else:
+		values = imgCol.filterBounds(bounds).map(getVi).getRegion(bounds, 30)
 
-	# additional variables to be used in R
-	if len(aux) > 0:
-		colNames = [u'date'] + aux[0][5:15]
-		numCol = len(colNames)
-		numRow = len(aux) - 1
-except ee.ee_exception.EEException:
-	# no data available
-	serie = []
+	# get time series info and apply cfmask filter
+	try:
+		aux = values.getInfo()
+		serie = []
+		for i in range(1, len(aux)):
+			# filtering using cfmask (only clear pixels are kept [value = 0])
+			if aux[i][4] == 0:
+				serie += [julianDayToDate(str(aux[i][0])[9:16])] + \
+				numpy.round(aux[i][5:15], 4).tolist()
+
+		# additional variables to be used in R
+		if len(aux) > 0:
+			colNames = [u'date'] + aux[0][5:15]
+			numCol = len(colNames)
+			numRow = len(aux) - 1
+
+		return serie, colNames, numCol, numRow
+
+	except ee.ee_exception.EEException:
+		# no data available
+		serie = []
+		colNames = []
+		numCol = []
+		numRow = []
+
+		return serie, colNames, numCol, numRow
