@@ -38,9 +38,9 @@ packs <- c(
 p_load(char = packs)
 # ---------------------------------------------------------- PY FUNCTIONS ----
 #set your virtual env
-use_condaenv(condaenv = "python2", conda = "/anaconda3/bin/conda", required = TRUE)
+#use_condaenv(condaenv = "python2", conda = "/anaconda3/bin/conda", required = TRUE)
 #set your virtual env
-#use_condaenv(condaenv = "gee", conda = "/home/glennmoncrieff/miniconda2/bin/conda", required = TRUE)
+use_python("/usr/bin/python")
 #source function
 source_python(paste0(getwd(), "/python/gee-px-ls.py"))
 
