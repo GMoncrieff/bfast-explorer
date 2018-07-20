@@ -1,6 +1,6 @@
 # --------------------------------------------------------------- LIBS ----
 
-options(shiny.sanitize.errors = FALSE)
+options(shiny.sanitize.errors = FALSE, digits=15)
 
 # this tool is still not compatible with Windows OS
 if(Sys.info()[["sysname"]] == "Windows") {
@@ -18,6 +18,7 @@ packs <- c(
 	"devtools",
 	"dplyr",
 	"ggmap",
+	"bfast",
 	"knitr",
 	"leaflet",
 	"lubridate",
@@ -34,17 +35,12 @@ packs <- c(
 	"zoo"
 )
 
-# GitHub
-packs_gh <- c(
-	"verbe039/bfast"
-)
-
 p_load(char = packs)
-p_load_gh(char = packs_gh)
-
 # ---------------------------------------------------------- PY FUNCTIONS ----
 #set your virtual env
 use_condaenv(condaenv = "python2", conda = "/anaconda3/bin/conda", required = TRUE)
+#set your virtual env
+#use_condaenv(condaenv = "gee", conda = "/home/glennmoncrieff/miniconda2/bin/conda", required = TRUE)
 #source function
 source_python(paste0(getwd(), "/python/gee-px-ls.py"))
 
@@ -579,7 +575,7 @@ satChoices <- c(
 )
 
 # coordinates (long, lat, zoom) of the default fixed center
-viewCenter <- c(-5.98, 24.69, 3)
+viewCenter <- c(20.5758736, -29.3948466, 6)
 
 # defining colors & pch for points from differente satellite sources
 satPar <- function(x) {

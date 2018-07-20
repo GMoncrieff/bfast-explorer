@@ -16,15 +16,20 @@ shinyServer(function(input, output, session) {
 						# downloaded marker info
 						markerDown = NULL,
 						# defaults view to the center of the atlantic ocean
-						searchLoc = data.frame(lon = viewCenter[1],
-											   lat = viewCenter[2],
-											   zoom = viewCenter[3]))
+						# searchLoc = data.frame(lon = viewCenter[1],
+						# 					   lat = viewCenter[2],
+						# 					   zoom = viewCenter[3]))
+						# defualt sto south africa
+						searchLoc = data.frame(lon = 20.5758736,
+						   						lat = -29.3948466,
+												zoom = 6))
 
 # ---------------------------------------------------------------- MAP ----
 
 	# render leaflet map
 	output$leaf <- renderLeaflet({
 		m <- leaflet(options = list(attributionControl = F)) %>%
+			setView(20.5758736, -29.3948466, zoom = 6) %>%
 			addTiles(
 				urlTemplate = "http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}",
 				attribution = paste(
@@ -165,10 +170,13 @@ shinyServer(function(input, output, session) {
 	# update v$searchLoc with map search query
 	observeEvent(input$action_search, {
 		# evaluate geocode, but suppress messages and warnings
-		options(warn = -1)
-		gc <- suppressMessages(geocode(input$select_search))
+		options(warn = -1, digits=14)
+		gc_st <- input$select_search %>%
+					strsplit(",")
+		gc    <- data.frame(lat = as.numeric(gc_st[[1]][1],length=12), lon = as.numeric(gc_st[[1]][2]))
+
 		options(warn = 0)
-		if (is.na(gc$lon)) {
+		if (is.na(gc$lon) | is.na(gc$lat)) {
 			# defaults view to the center of the atlantic ocean
 			v$searchLoc$lon <- viewCenter[1]
 			v$searchLoc$lat <- viewCenter[2]
@@ -178,6 +186,18 @@ shinyServer(function(input, output, session) {
 			v$searchLoc$lon <- gc$lon
 			v$searchLoc$lat <- gc$lat
 			v$searchLoc$zoom <- 16
+
+			# and drop a marker
+			id <- as.character(v$markerId)
+			tmp <- input$leaf_click
+			v$markerId <- v$markerId + 1
+			leafletProxy("leaf") %>%
+				addAwesomeMarkers(
+					lng = v$searchLoc$lon,
+					lat = v$searchLoc$lat,
+					layerId = id,
+					icon = iconSet$marker
+				)
 		}
 	})
 

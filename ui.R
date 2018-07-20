@@ -4,7 +4,9 @@ shinyUI(
 	navbarPage(
 		title = div(
 			em(strong("BFAST Explorer")),
-			HTML("<small>by Alexandre E. Almeida</small>")
+			HTML("<large>by Alexandre E. Almeida and Glenn Moncrieff</large>"),
+			a(img(src = "saeon.png", height = "40px"), href = "http://www.saeon.ac.za", target = "_blank")
+		#	div(style = "display:inline;", HTML("&nbsp&nbsp"))
 		),
 		windowTitle = "BFAST Explorer",
 		id = "navbar",
@@ -49,7 +51,7 @@ shinyUI(
 											<i class="fa fa-search"></i>
 										</button>
 									</label>
-									<input id="select_search" type="text" class="form-control" value="" placeholder="Search for a location..."/>
+									<input id="select_search" type="text" class="form-control" value="" placeholder="Search for a location eg -33.99 18.95"/>
 								</div>
 							</div>
 							'),
