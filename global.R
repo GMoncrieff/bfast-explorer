@@ -38,11 +38,17 @@ packs <- c(
 p_load(char = packs)
 # ---------------------------------------------------------- PY FUNCTIONS ----
 #set your virtual env
-#use_condaenv(condaenv = "python2", conda = "/anaconda3/bin/conda", required = TRUE)
-#set your virtual env
-use_python("/usr/bin/python")
-#source function
-source_python(paste0(getwd(), "/python/gee-px-ls.py"))
+if(Sys.info()[["sysname"]] == "Darwin") {
+	use_condaenv(condaenv = "python2", conda = "/anaconda3/bin/conda", required = TRUE)
+	#source function
+	source_python(paste0(getwd(), "/python/gee-px-ls.py"))
+} else {
+	use_python("/usr/bin/python")
+	#source function
+    source_python(paste0(getwd(), "/python/gee-px-ls_app.py"))
+}
+
+
 
 # ---------------------------------------------------------- FUNCTIONS ----
 
