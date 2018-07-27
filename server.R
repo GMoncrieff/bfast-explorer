@@ -325,6 +325,7 @@ shinyServer(function(input, output, session) {
 				tmp[, 2:ncol(tmp)] <- apply(tmp[, 2:ncol(tmp)],
 											MARGIN = 2,
 											as.numeric)
+
 				colnames(tmp) <- ee_res[[2]]
 
 				# exclude saturated data
