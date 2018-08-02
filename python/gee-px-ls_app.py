@@ -8,7 +8,7 @@ from oauth2client.client import GoogleCredentials
 ee.Initialize(GoogleCredentials.get_application_default())
 
 def julianDayToDate(s):
-	return datetime.strptime(s, '%Y%j').strftime('%Y_%m_%d')
+	return datetime.strptime(s, '%Y%m%d').strftime('%Y_%m_%d')
 
 # function to calculate and add some spectral-bands-based indexes (LS 4,5,7)
 def getVi(image):
@@ -24,7 +24,7 @@ def getVi(image):
 	ndvi = image.normalizedDifference(['B4','B3'])
 	ndmi = image.normalizedDifference(['B4','B5'])
 	image2 = (
-		image.select(['cfmask'])
+		image.select(['pixel_qa'])
 		.addBands(b1.select([0],['b1']))
 		.addBands(b2.select([0],['b2']))
 		.addBands(b3.select([0],['b3']))
@@ -53,7 +53,7 @@ def getVi8(image):
 	ndvi = image.normalizedDifference(['B5','B4'])
 	ndmi = image.normalizedDifference(['B5','B6'])
 	image2 = (
-		image.select(['cfmask'])
+		image.select(['pixel_qa'])
 		.addBands(b1.select([0],['b1']))
 		.addBands(b2.select([0],['b2']))
 		.addBands(b3.select([0],['b3']))
@@ -80,10 +80,12 @@ def geteeSeries(coords,satChoice):
 	imgCol = ee.ImageCollection('LANDSAT/' + satChoice)
 
 	# get time series from GEE
-	if satChoice == 'LC8_SR':
+	if satChoice == "LC08/C01/T1_SR":
 		values = imgCol.filterBounds(bounds).map(getVi8).getRegion(bounds, 30)
+		clear_qa = [322, 386]
 	else:
 		values = imgCol.filterBounds(bounds).map(getVi).getRegion(bounds, 30)
+		clear_qa = [66, 130]
 
 	# get time series info and apply cfmask filter
 	try:
@@ -91,8 +93,8 @@ def geteeSeries(coords,satChoice):
 		serie = []
 		for i in range(1, len(aux)):
 			# filtering using cfmask (only clear pixels are kept [value = 0])
-			if aux[i][4] == 0:
-				serie += [julianDayToDate(str(aux[i][0])[9:16])] + \
+			if aux[i][4] in clear_qa :
+				serie += [julianDayToDate(str(aux[i][0])[-8:])] + \
 				numpy.round(aux[i][5:15], 4).tolist()
 
 		# additional variables to be used in R
