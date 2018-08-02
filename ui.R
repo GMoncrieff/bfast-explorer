@@ -51,7 +51,7 @@ shinyUI(
 											<i class="fa fa-search"></i>
 										</button>
 									</label>
-									<input id="select_search" type="text" class="form-control" value="" placeholder="input lat/lon eg -33.99 18.95"/>
+									<input id="select_search" type="text" class="form-control" value="" placeholder="input lat/lon eg -33.99, 18.95"/>
 								</div>
 							</div>
 							'),
